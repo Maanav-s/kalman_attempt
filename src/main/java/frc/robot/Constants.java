@@ -17,14 +17,14 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final int CAN_ID = 0;
+    public static final int CAN_ID = 46;
 
-    public static final double kV = 0;
-    public static final double kA = 0;
+    public static final double kV = 0.12723;
+    public static final double kA = 0.016509;
 
-    public static final double kModelAccuracy = 0;
-    public static final double kEncoderAccuracy = 0;
+    public static final double kModelAccuracy = 0.0001;
+    public static final double kEncoderAccuracy = 0.0001;
 
-    public static final double kVelocityErrorTolerance = 0;
-    public static final double kVoltageErrorTolerance = 0;
+    public static final double kVelocityErrorTolerance = 1;
+    public static final double kVoltageErrorTolerance = 1;
 }

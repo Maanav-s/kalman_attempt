@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
@@ -32,6 +33,7 @@ public class Flywheel extends SubsystemBase {
 
   private final LinearSystem<N1, N1, N1> m_flywheelPlant;
   private final KalmanFilter<N1, N1, N1> m_observer;
+  private final SimpleMotorFeedforward feedforward;
   private final LinearQuadraticRegulator<N1, N1, N1> m_controller;
   private final LinearSystemLoop<N1, N1, N1> m_loop;
 
@@ -47,8 +49,8 @@ public class Flywheel extends SubsystemBase {
     m_observer = new KalmanFilter<>(
         Nat.N1(), Nat.N1(),
         m_flywheelPlant,
-        VecBuilder.fill(Constants.kModelAccuracy), // model
         VecBuilder.fill(Constants.kEncoderAccuracy), // encoder
+        VecBuilder.fill(Constants.kModelAccuracy), // model
         0.020); // periodic time?
     m_controller = new LinearQuadraticRegulator<>(
         m_flywheelPlant,
@@ -64,12 +66,14 @@ public class Flywheel extends SubsystemBase {
         // starting point because that is the (approximate) maximum current of a
         // battery.
         0.020); // Periodic time?
+ 
     m_loop = new LinearSystemLoop<>(
         m_flywheelPlant,
         m_controller,
         m_observer,
         30.0, // max current
         0.020); // periodic time?
+
   }
 
   @Override
@@ -87,14 +91,13 @@ public class Flywheel extends SubsystemBase {
     // all meant to be in voltage?!
     double nextCurrent = m_loop.getU(0);
     main.set(ControlMode.Current, nextCurrent);
-
   }
 
   public void run() {
-    main.set(ControlMode.PercentOutput, 0.3);
+    setpoint = 10000;
   }
 
   public void stop() {
-    main.set(ControlMode.PercentOutput, 0);
+    setpoint = 0;
   }
 }
